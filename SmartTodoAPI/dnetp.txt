@@ -1,0 +1,536 @@
+using System;
+
+class Student
+{
+    // Data Members
+    int rollNo;
+    string name;
+    int marks;
+
+    // Method to Accept Data
+    public void GetData()
+    {
+        Console.Write("Enter Roll Number: ");
+        rollNo = Convert.ToInt32(Console.ReadLine());
+
+        Console.Write("Enter Name: ");
+        name = Console.ReadLine();
+
+        Console.Write("Enter Marks: ");
+        marks = Convert.ToInt32(Console.ReadLine());
+    }
+
+    // Method to Display Data
+    public void DisplayData()
+    {
+        Console.WriteLine("\nStudent Details");
+        Console.WriteLine("Roll Number : " + rollNo);
+        Console.WriteLine("Name        : " + name);
+        Console.WriteLine("Marks       : " + marks);
+    }
+
+    // Getter Method
+    public int GetRollNo()
+    {
+        return rollNo;
+    }
+
+    // Update Method
+    public void UpdateData()
+    {
+        Console.Write("Enter New Name: ");
+        name = Console.ReadLine();
+
+        Console.Write("Enter New Marks: ");
+        marks = Convert.ToInt32(Console.ReadLine());
+
+        Console.WriteLine("Record Updated Successfully!");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Student[] students = new Student[5];
+
+        int count = 0;
+        int choice;
+
+        do
+        {
+            Console.WriteLine("\n===== STUDENT MANAGEMENT SYSTEM =====");
+            Console.WriteLine("1. Add Student");
+            Console.WriteLine("2. Display Students");
+            Console.WriteLine("3. Search Student");
+            Console.WriteLine("4. Update Student");
+            Console.WriteLine("5. Delete Student");
+            Console.WriteLine("6. Exit");
+
+            Console.Write("Enter Your Choice: ");
+            choice = Convert.ToInt32(Console.ReadLine());
+
+            switch (choice)
+            {
+                case 1:
+
+                    if (count < 5)
+                    {
+                        students[count] = new Student();
+                        students[count].GetData();
+                        count++;
+
+                        Console.WriteLine("Student Added Successfully!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Storage Full!");
+                    }
+
+                    break;
+
+                case 2:
+
+                    if (count == 0)
+                    {
+                        Console.WriteLine("No Records Found!");
+                    }
+                    else
+                    {
+                        for (int i = 0; i < count; i++)
+                        {
+                            students[i].DisplayData();
+                        }
+                    }
+
+                    break;
+
+                case 3:
+
+                    Console.Write("Enter Roll Number to Search: ");
+                    int searchRoll = Convert.ToInt32(Console.ReadLine());
+
+                    bool found = false;
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        if (students[i].GetRollNo() == searchRoll)
+                        {
+                            students[i].DisplayData();
+                            found = true;
+                        }
+                    }
+
+                    if (!found)
+                    {
+                        Console.WriteLine("Student Not Found!");
+                    }
+
+                    break;
+
+                case 4:
+
+                    Console.Write("Enter Roll Number to Update: ");
+                    int updateRoll = Convert.ToInt32(Console.ReadLine());
+
+                    bool updateFound = false;
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        if (students[i].GetRollNo() == updateRoll)
+                        {
+                            students[i].UpdateData();
+                            updateFound = true;
+                        }
+                    }
+
+                    if (!updateFound)
+                    {
+                        Console.WriteLine("Student Not Found!");
+                    }
+
+                    break;
+
+                case 5:
+
+                    Console.Write("Enter Roll Number to Delete: ");
+                    int deleteRoll = Convert.ToInt32(Console.ReadLine());
+
+                    bool deleteFound = false;
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        if (students[i].GetRollNo() == deleteRoll)
+                        {
+                            for (int j = i; j < count - 1; j++)
+                            {
+                                students[j] = students[j + 1];
+                            }
+
+                            count--;
+                            deleteFound = true;
+
+                            Console.WriteLine("Student Deleted Successfully!");
+                            break;
+                        }
+                    }
+
+                    if (!deleteFound)
+                    {
+                        Console.WriteLine("Student Not Found!");
+                    }
+
+                    break;
+
+                case 6:
+
+                    Console.WriteLine("Program Exited.");
+                    break;
+
+                default:
+
+                    Console.WriteLine("Invalid Choice!");
+                    break;
+            }
+
+        } while (choice != 6);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+using System;
+
+class DivideByZeroDemo
+{
+    static void Main()
+    {
+        int num1, num2, result;
+
+        try
+        {
+            Console.Write("Enter First Number: ");
+            num1 = Convert.ToInt32(Console.ReadLine());
+
+            Console.Write("Enter Second Number: ");
+            num2 = Convert.ToInt32(Console.ReadLine());
+
+            // Exception may occur here
+            result = num1 / num2;
+
+            Console.WriteLine("Result = " + result);
+        }
+
+        // Handling DivideByZero Exception
+        catch (DivideByZeroException e)
+        {
+            Console.WriteLine("Error: Cannot divide by zero!");
+            Console.WriteLine(e.Message);
+        }
+
+        // Handling Invalid Input
+        catch (FormatException e)
+        {
+            Console.WriteLine("Invalid Input!");
+            Console.WriteLine(e.Message);
+        }
+
+        // Finally block
+        finally
+        {
+            Console.WriteLine("Program Ended.");
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+using System;
+
+class DelegateSortDemo
+{
+    // Delegate for comparison logic
+    public delegate bool Compare(int a, int b);
+
+    // Sorting Method
+    static void SortArray(int[] arr, Compare compare)
+    {
+        int temp;
+
+        for (int i = 0; i < arr.Length; i++)
+        {
+            for (int j = i + 1; j < arr.Length; j++)
+            {
+                // Delegate decides sorting order
+                if (compare(arr[i], arr[j]))
+                {
+                    temp = arr[i];
+                    arr[i] = arr[j];
+                    arr[j] = temp;
+                }
+            }
+        }
+    }
+
+    // Ascending comparison
+    static bool Ascending(int a, int b)
+    {
+        return a > b;
+    }
+
+    // Descending comparison
+    static bool Descending(int a, int b)
+    {
+        return a < b;
+    }
+
+    // Display Array
+    static void Display(int[] arr)
+    {
+        foreach (int num in arr)
+        {
+            Console.Write(num + " ");
+        }
+        Console.WriteLine();
+    }
+
+    static void Main()
+    {
+        int[] numbers = { 45, 12, 78, 34, 23 };
+
+        Console.WriteLine("Original Array:");
+        Display(numbers);
+
+        // Ascending Order
+        SortArray(numbers, Ascending);
+
+        Console.WriteLine("\nArray Sorted in Ascending Order:");
+        Display(numbers);
+
+        // Descending Order
+        SortArray(numbers, Descending);
+
+        Console.WriteLine("\nArray Sorted in Descending Order:");
+        Display(numbers);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace GenericRepositoryDemo
+{
+    // ============================
+    // Generic Repository Class
+    // ============================
+    class Repository<T>
+    {
+        private List<T> items = new List<T>();
+
+        // CREATE
+        public void Add(T item)
+        {
+            items.Add(item);
+            Console.WriteLine("Item Added Successfully!");
+        }
+
+        // READ
+        public List<T> GetAll()
+        {
+            return items;
+        }
+
+        // UPDATE
+        public void Update(int index, T newItem)
+        {
+            if (index >= 0 && index < items.Count)
+            {
+                items[index] = newItem;
+                Console.WriteLine("Item Updated Successfully!");
+            }
+            else
+            {
+                Console.WriteLine("Invalid Index!");
+            }
+        }
+
+        // DELETE
+        public void Delete(int index)
+        {
+            if (index >= 0 && index < items.Count)
+            {
+                items.RemoveAt(index);
+                Console.WriteLine("Item Deleted Successfully!");
+            }
+            else
+            {
+                Console.WriteLine("Invalid Index!");
+            }
+        }
+    }
+
+    // ============================
+    // Student Entity
+    // ============================
+    class Student
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+
+        public override string ToString()
+        {
+            return $"Student ID: {Id}, Name: {Name}";
+        }
+    }
+
+    // ============================
+    // Employee Entity
+    // ============================
+    class Employee
+    {
+        public int Id { get; set; }
+        public string Department { get; set; }
+
+        public override string ToString()
+        {
+            return $"Employee ID: {Id}, Department: {Department}";
+        }
+    }
+
+    // ============================
+    // Main Program
+    // ============================
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Repository for Students
+            Repository<Student> studentRepo = new Repository<Student>();
+
+            studentRepo.Add(new Student { Id = 1, Name = "Rahul" });
+            studentRepo.Add(new Student { Id = 2, Name = "Priya" });
+
+            Console.WriteLine("\nStudent Records:");
+            foreach (var student in studentRepo.GetAll())
+            {
+                Console.WriteLine(student);
+            }
+
+            // Update Student
+            studentRepo.Update(0, new Student { Id = 1, Name = "Amit" });
+
+            Console.WriteLine("\nAfter Updating Student:");
+            foreach (var student in studentRepo.GetAll())
+            {
+                Console.WriteLine(student);
+            }
+
+            // Delete Student
+            studentRepo.Delete(1);
+
+            Console.WriteLine("\nAfter Deleting Student:");
+            foreach (var student in studentRepo.GetAll())
+            {
+                Console.WriteLine(student);
+            }
+
+            // ====================================
+            // Repository for Employees
+            // ====================================
+            Repository<Employee> employeeRepo = new Repository<Employee>();
+
+            employeeRepo.Add(new Employee { Id = 101, Department = "HR" });
+            employeeRepo.Add(new Employee { Id = 102, Department = "IT" });
+
+            Console.WriteLine("\nEmployee Records:");
+            foreach (var emp in employeeRepo.GetAll())
+            {
+                Console.WriteLine(emp);
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace LINQGroupByDemo
+{
+    // Employee Class
+    class Employee
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Department { get; set; }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Employee List
+            List<Employee> employees = new List<Employee>()
+            {
+                new Employee { Id = 1, Name = "Rahul", Department = "IT" },
+                new Employee { Id = 2, Name = "Priya", Department = "HR" },
+                new Employee { Id = 3, Name = "Amit", Department = "IT" },
+                new Employee { Id = 4, Name = "Sneha", Department = "Finance" },
+                new Employee { Id = 5, Name = "Karan", Department = "HR" },
+                new Employee { Id = 6, Name = "Neha", Department = "IT" }
+            };
+
+            // LINQ Query
+            var result = employees
+                         .GroupBy(e => e.Department)
+                         .Select(g => new
+                         {
+                             Department = g.Key,
+                             EmployeeCount = g.Count()
+                         });
+
+            // Display Result
+            Console.WriteLine("Employees Grouped By Department:\n");
+
+            foreach (var item in result)
+            {
+                Console.WriteLine("Department : " + item.Department);
+                Console.WriteLine("Employee Count : " + item.EmployeeCount);
+                Console.WriteLine();
+            }
+        }
+    }
+}

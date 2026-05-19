@@ -1,0 +1,719 @@
+LINEAR SEARCH 
+
+
+import java.util.Random;
+
+public class LinearSearchAnalysis {
+
+    // Linear Search Function
+    static int linearSearch(int a[], int n, int key) {
+
+        for (int i = 0; i < n; i++) {
+
+            if (a[i] == key)
+                return i;
+        }
+
+        return -1;
+    }
+
+    // Fill array based on case
+    static int fill(int a[], int n, int type) {
+
+        Random rand = new Random();
+
+        for (int i = 0; i < n; i++)
+            a[i] = rand.nextInt(10000);
+
+        if (type == 0)
+            return a[0];
+
+        else if (type == 1)
+            return a[n / 2];
+
+        else
+            return -1;
+    }
+
+    public static void main(String[] args) {
+
+        int sizes[] = {
+            500, 1000, 1500, 2000, 2500,
+            3000, 3500, 4000, 4500, 5000,
+            5500, 6000, 6500, 7000, 7500,
+            8000, 8500, 9000, 9500, 10000,
+            10500, 11000, 11500, 12000, 12500,
+            13000, 13500, 14000, 14500, 15000
+        };
+
+        System.out.println("N\tBest(ms)\tAverage(ms)\tWorst(ms)");
+
+        for (int t = 0; t < 30; t++) {
+
+            int n = sizes[t];
+            int a[] = new int[n];
+            int key;
+
+            // Best Case
+            key = fill(a, n, 0);
+
+            long start = System.nanoTime();
+            linearSearch(a, n, key);
+            long end = System.nanoTime();
+
+            double best = (end - start) / 1_000_000.0;
+
+            // Average Case
+            key = fill(a, n, 1);
+
+            start = System.nanoTime();
+            linearSearch(a, n, key);
+            end = System.nanoTime();
+
+            double avg = (end - start) / 1_000_000.0;
+
+            // Worst Case
+            key = fill(a, n, 2);
+
+            start = System.nanoTime();
+            linearSearch(a, n, key);
+            end = System.nanoTime();
+
+            double worst = (end - start) / 1_000_000.0;
+
+            System.out.printf("%d\t%.3f\t\t%.3f\t\t%.3f\n",
+                    n, best, avg, worst);
+        }
+    }
+}
+
+
+
+
+BINARY SEARCH
+
+
+import java.util.Random;
+
+public class BinarySearchAnalysis {
+
+    // Binary Search Function
+    static int binarySearch(int a[], int n, int key) {
+
+        int low = 0;
+        int high = n - 1;
+
+        while (low <= high) {
+
+            int mid = (low + high) / 2;
+
+            if (a[mid] == key)
+                return mid;
+
+            else if (a[mid] < key)
+                low = mid + 1;
+
+            else
+                high = mid - 1;
+        }
+
+        return -1;
+    }
+
+    // Fill sorted array
+    static int fill(int a[], int n, int type) {
+
+        Random rand = new Random();
+
+        for (int i = 0; i < n; i++)
+            a[i] = i;
+
+        if (type == 0)
+            return a[n / 2];
+
+        else if (type == 1)
+            return a[rand.nextInt(n)];
+
+        else
+            return -1;
+    }
+
+    public static void main(String[] args) {
+
+        int sizes[] = {
+            500, 1000, 1500, 2000, 2500,
+            3000, 3500, 4000, 4500, 5000,
+            5500, 6000, 6500, 7000, 7500,
+            8000, 8500, 9000, 9500, 10000,
+            10500, 11000, 11500, 12000, 12500,
+            13000, 13500, 14000, 14500, 15000
+        };
+
+        System.out.println("N\tBest(ms)\tAverage(ms)\tWorst(ms)");
+
+        for (int t = 0; t < 30; t++) {
+
+            int n = sizes[t];
+            int a[] = new int[n];
+            int key;
+
+            // Best Case
+            key = fill(a, n, 0);
+
+            long start = System.nanoTime();
+            binarySearch(a, n, key);
+            long end = System.nanoTime();
+
+            double best = (end - start) / 1_000_000.0;
+
+            // Average Case
+            key = fill(a, n, 1);
+
+            start = System.nanoTime();
+            binarySearch(a, n, key);
+            end = System.nanoTime();
+
+            double avg = (end - start) / 1_000_000.0;
+
+            // Worst Case
+            key = fill(a, n, 2);
+
+            start = System.nanoTime();
+            binarySearch(a, n, key);
+            end = System.nanoTime();
+
+            double worst = (end - start) / 1_000_000.0;
+
+            System.out.printf("%d\t%.3f\t\t%.3f\t\t%.3f\n",
+                    n, best, avg, worst);
+        }
+    }
+}
+
+
+
+
+SELECTION SORT
+
+
+import java.util.Random;
+
+public class SelectionSortAnalysis {
+
+    static void selectionSort(int a[], int n) {
+
+        for (int i = 0; i < n - 1; i++) {
+
+            int minIndex = i;
+
+            for (int j = i + 1; j < n; j++) {
+
+                if (a[j] < a[minIndex]) {
+                    minIndex = j;
+                }
+            }
+
+            if (minIndex != i) {
+
+                int temp = a[i];
+                a[i] = a[minIndex];
+                a[minIndex] = temp;
+            }
+        }
+    }
+
+    static void fill(int a[], int n, int type) {
+
+        Random rand = new Random();
+
+        for (int i = 0; i < n; i++) {
+
+            if (type == 0)
+                a[i] = i;
+
+            else if (type == 1)
+                a[i] = rand.nextInt(10000);
+
+            else
+                a[i] = n - i;
+        }
+    }
+
+    public static void main(String[] args) {
+
+        int sizes[] = {
+            500, 1000, 1500, 2000, 2500,
+            3000, 3500, 4000, 4500, 5000,
+            5500, 6000, 6500, 7000, 7500,
+            8000, 8500, 9000, 9500, 10000,
+            10500, 11000, 11500, 12000, 12500,
+            13000, 13500, 14000, 14500, 15000
+        };
+
+        System.out.println("N\tBest(ms)\tAverage(ms)\tWorst(ms)");
+
+        for (int t = 0; t < 30; t++) {
+
+            int n = sizes[t];
+            int a[] = new int[n];
+
+            // Best Case
+            fill(a, n, 0);
+
+            long start = System.nanoTime();
+            selectionSort(a, n);
+            long end = System.nanoTime();
+
+            double best = (end - start) / 1_000_000.0;
+
+            // Average Case
+            fill(a, n, 1);
+
+            start = System.nanoTime();
+            selectionSort(a, n);
+            end = System.nanoTime();
+
+            double avg = (end - start) / 1_000_000.0;
+
+            // Worst Case
+            fill(a, n, 2);
+
+            start = System.nanoTime();
+            selectionSort(a, n);
+            end = System.nanoTime();
+
+            double worst = (end - start) / 1_000_000.0;
+
+            System.out.printf("%d\t%.3f\t\t%.3f\t\t%.3f\n",
+                    n, best, avg, worst);
+        }
+    }
+}
+
+
+
+INSERTION SORT
+
+
+import java.util.Random;
+
+public class InsertionSortAnalysis {
+
+    static void insertionSort(int a[], int n) {
+
+        for (int i = 1; i < n; i++) {
+
+            int key = a[i];
+            int j = i - 1;
+
+            while (j >= 0 && a[j] > key) {
+
+                a[j + 1] = a[j];
+                j--;
+            }
+
+            a[j + 1] = key;
+        }
+    }
+
+    static void fill(int a[], int n, int type) {
+
+        Random rand = new Random();
+
+        for (int i = 0; i < n; i++) {
+
+            if (type == 0)
+                a[i] = i;
+
+            else if (type == 1)
+                a[i] = rand.nextInt(10000);
+
+            else
+                a[i] = n - i;
+        }
+    }
+
+    public static void main(String[] args) {
+
+        int sizes[] = {
+            500, 1000, 1500, 2000, 2500,
+            3000, 3500, 4000, 4500, 5000,
+            5500, 6000, 6500, 7000, 7500,
+            8000, 8500, 9000, 9500, 10000,
+            10500, 11000, 11500, 12000, 12500,
+            13000, 13500, 14000, 14500, 15000
+        };
+
+        System.out.println("N\tBest(ms)\tAverage(ms)\tWorst(ms)");
+
+        for (int t = 0; t < 30; t++) {
+
+            int n = sizes[t];
+            int a[] = new int[n];
+
+            fill(a, n, 0);
+
+            long start = System.nanoTime();
+            insertionSort(a, n);
+            long end = System.nanoTime();
+
+            double best = (end - start) / 1_000_000.0;
+
+            fill(a, n, 1);
+
+            start = System.nanoTime();
+            insertionSort(a, n);
+            end = System.nanoTime();
+
+            double avg = (end - start) / 1_000_000.0;
+
+            fill(a, n, 2);
+
+            start = System.nanoTime();
+            insertionSort(a, n);
+            end = System.nanoTime();
+
+            double worst = (end - start) / 1_000_000.0;
+
+            System.out.printf("%d\t%.3f\t\t%.3f\t\t%.3f\n",
+                    n, best, avg, worst);
+        }
+    }
+}
+
+
+
+BUBBLE SORT
+
+
+import java.util.Random;
+
+public class BubbleSortAnalysis {
+
+    static void bubbleSort(int a[], int n) {
+
+        for (int i = 0; i < n - 1; i++) {
+
+            boolean swapped = false;
+
+            for (int j = 0; j < n - i - 1; j++) {
+
+                if (a[j] > a[j + 1]) {
+
+                    int temp = a[j];
+                    a[j] = a[j + 1];
+                    a[j + 1] = temp;
+
+                    swapped = true;
+                }
+            }
+
+            if (!swapped)
+                break;
+        }
+    }
+
+    static void fill(int a[], int n, int type) {
+
+        Random rand = new Random();
+
+        for (int i = 0; i < n; i++) {
+
+            if (type == 0)
+                a[i] = i;
+
+            else if (type == 1)
+                a[i] = rand.nextInt(10000);
+
+            else
+                a[i] = n - i;
+        }
+    }
+
+    public static void main(String[] args) {
+
+        int sizes[] = {
+            500, 1000, 1500, 2000, 2500,
+            3000, 3500, 4000, 4500, 5000,
+            5500, 6000, 6500, 7000, 7500,
+            8000, 8500, 9000, 9500, 10000,
+            10500, 11000, 11500, 12000, 12500,
+            13000, 13500, 14000, 14500, 15000
+        };
+
+        System.out.println("N\tBest(ms)\tAverage(ms)\tWorst(ms)");
+
+        for (int t = 0; t < 30; t++) {
+
+            int n = sizes[t];
+            int a[] = new int[n];
+
+            fill(a, n, 0);
+
+            long start = System.nanoTime();
+            bubbleSort(a, n);
+            long end = System.nanoTime();
+
+            double best = (end - start) / 1_000_000.0;
+
+            fill(a, n, 1);
+
+            start = System.nanoTime();
+            bubbleSort(a, n);
+            end = System.nanoTime();
+
+            double avg = (end - start) / 1_000_000.0;
+
+            fill(a, n, 2);
+
+            start = System.nanoTime();
+            bubbleSort(a, n);
+            end = System.nanoTime();
+
+            double worst = (end - start) / 1_000_000.0;
+
+            System.out.printf("%d\t%.3f\t\t%.3f\t\t%.3f\n",
+                    n, best, avg, worst);
+        }
+    }
+}
+
+
+
+MERGE SORT
+
+
+
+import java.util.Random;
+
+public class MergeSortAnalysis {
+
+    static void merge(int a[], int l, int m, int r) {
+
+        int n1 = m - l + 1;
+        int n2 = r - m;
+
+        int L[] = new int[n1];
+        int R[] = new int[n2];
+
+        for (int i = 0; i < n1; i++)
+            L[i] = a[l + i];
+
+        for (int j = 0; j < n2; j++)
+            R[j] = a[m + 1 + j];
+
+        int i = 0, j = 0, k = l;
+
+        while (i < n1 && j < n2) {
+
+            if (L[i] <= R[j])
+                a[k++] = L[i++];
+
+            else
+                a[k++] = R[j++];
+        }
+
+        while (i < n1)
+            a[k++] = L[i++];
+
+        while (j < n2)
+            a[k++] = R[j++];
+    }
+
+    static void mergeSort(int a[], int l, int r) {
+
+        if (l < r) {
+
+            int m = (l + r) / 2;
+
+            mergeSort(a, l, m);
+            mergeSort(a, m + 1, r);
+
+            merge(a, l, m, r);
+        }
+    }
+
+    static void fill(int a[], int n, int type) {
+
+        Random rand = new Random();
+
+        for (int i = 0; i < n; i++) {
+
+            if (type == 0)
+                a[i] = i;
+
+            else if (type == 1)
+                a[i] = rand.nextInt(10000);
+
+            else
+                a[i] = n - i;
+        }
+    }
+
+    public static void main(String[] args) {
+
+        int sizes[] = {
+            500, 1000, 1500, 2000, 2500,
+            3000, 3500, 4000, 4500, 5000,
+            5500, 6000, 6500, 7000, 7500,
+            8000, 8500, 9000, 9500, 10000,
+            10500, 11000, 11500, 12000, 12500,
+            13000, 13500, 14000, 14500, 15000
+        };
+
+        System.out.println("N\tBest(ms)\tAverage(ms)\tWorst(ms)");
+
+        for (int t = 0; t < 30; t++) {
+
+            int n = sizes[t];
+            int a[] = new int[n];
+
+            fill(a, n, 0);
+
+            long start = System.nanoTime();
+            mergeSort(a, 0, n - 1);
+            long end = System.nanoTime();
+
+            double best = (end - start) / 1_000_000.0;
+
+            fill(a, n, 1);
+
+            start = System.nanoTime();
+            mergeSort(a, 0, n - 1);
+            end = System.nanoTime();
+
+            double avg = (end - start) / 1_000_000.0;
+
+            fill(a, n, 2);
+
+            start = System.nanoTime();
+            mergeSort(a, 0, n - 1);
+            end = System.nanoTime();
+
+            double worst = (end - start) / 1_000_000.0;
+
+            System.out.printf("%d\t%.3f\t\t%.3f\t\t%.3f\n",
+                    n, best, avg, worst);
+        }
+    }
+}
+
+
+
+
+QUICK SORT
+
+
+
+import java.util.Random;
+
+public class QuickSortAnalysis {
+
+    static void swap(int a[], int i, int j) {
+
+        int temp = a[i];
+        a[i] = a[j];
+        a[j] = temp;
+    }
+
+    static int partition(int a[], int low, int high) {
+
+        int pivot = a[high];
+        int i = low - 1;
+
+        for (int j = low; j < high; j++) {
+
+            if (a[j] < pivot) {
+
+                i++;
+                swap(a, i, j);
+            }
+        }
+
+        swap(a, i + 1, high);
+
+        return i + 1;
+    }
+
+    static void quickSort(int a[], int low, int high) {
+
+        if (low < high) {
+
+            int pi = partition(a, low, high);
+
+            quickSort(a, low, pi - 1);
+            quickSort(a, pi + 1, high);
+        }
+    }
+
+    static void fill(int a[], int n, int type) {
+
+        Random rand = new Random();
+
+        for (int i = 0; i < n; i++) {
+
+            if (type == 0)
+                a[i] = i;
+
+            else if (type == 1)
+                a[i] = rand.nextInt(10000);
+
+            else
+                a[i] = n - i;
+        }
+    }
+
+    public static void main(String[] args) {
+
+        int sizes[] = {
+            500, 1000, 1500, 2000, 2500,
+            3000, 3500, 4000, 4500, 5000,
+            5500, 6000, 6500, 7000, 7500,
+            8000, 8500, 9000, 9500, 10000,
+            10500, 11000, 11500, 12000, 12500,
+            13000, 13500, 14000, 14500, 15000
+        };
+
+        System.out.println("N\tBest(ms)\tAverage(ms)\tWorst(ms)");
+
+        for (int t = 0; t < 30; t++) {
+
+            int n = sizes[t];
+            int a[] = new int[n];
+
+            fill(a, n, 0);
+
+            long start = System.nanoTime();
+            quickSort(a, 0, n - 1);
+            long end = System.nanoTime();
+
+            double best = (end - start) / 1_000_000.0;
+
+            fill(a, n, 1);
+
+            start = System.nanoTime();
+            quickSort(a, 0, n - 1);
+            end = System.nanoTime();
+
+            double avg = (end - start) / 1_000_000.0;
+
+            fill(a, n, 2);
+
+            start = System.nanoTime();
+            quickSort(a, 0, n - 1);
+            end = System.nanoTime();
+
+            double worst = (end - start) / 1_000_000.0;
+
+            System.out.printf("%d\t%.3f\t\t%.3f\t\t%.3f\n",
+                    n, best, avg, worst);
+        }
+    }
+}
+
+
+
+
+
+
+

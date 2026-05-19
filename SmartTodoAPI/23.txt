@@ -1,0 +1,540 @@
+Selection Sort 
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void selectionSort(int a[], int n)
+{
+    for (int i = 0; i < n - 1; i++)
+    {
+        int minIndex = i;
+
+        for (int j = i + 1; j < n; j++)
+        {
+            if (a[j] < a[minIndex])
+            {
+                minIndex = j;
+            }
+        }
+
+        if (minIndex != i)
+        {
+            int temp = a[i];
+            a[i] = a[minIndex];
+            a[minIndex] = temp;
+        }
+    }
+}
+
+void fill(int a[], int n, int type)
+{
+    for (int i = 0; i < n; i++)
+    {
+        a[i] = (type == 0) ? i
+               : (type == 1) ? rand() % 10000
+               : n - i;
+    }
+}
+
+int main()
+{
+    int sizes[30] =
+    {
+        500, 1000, 1500, 2000, 2500,
+        3000, 3500, 4000, 4500, 5000,
+        5500, 6000, 6500, 7000, 7500,
+        8000, 8500, 9000, 9500, 10000,
+        10500, 11000, 11500, 12000, 12500,
+        13000, 13500, 14000, 14500, 15000
+    };
+
+    printf("N\tBest(ms)\tAverage(ms)\tWorst(ms)\n");
+
+    for (int t = 0; t < 30; t++)
+    {
+        int n = sizes[t];
+
+        int *a = malloc(n * sizeof(int));
+
+        clock_t s, e;
+
+        // Best case
+        fill(a, n, 0);
+
+        s = clock();
+        selectionSort(a, n);
+        e = clock();
+
+        double best =
+            ((double)(e - s) / CLOCKS_PER_SEC) * 1000;
+
+        // Average case
+        fill(a, n, 1);
+
+        s = clock();
+        selectionSort(a, n);
+        e = clock();
+
+        double avg =
+            ((double)(e - s) / CLOCKS_PER_SEC) * 1000;
+
+        // Worst case
+        fill(a, n, 2);
+
+        s = clock();
+        selectionSort(a, n);
+        e = clock();
+
+        double worst =
+            ((double)(e - s) / CLOCKS_PER_SEC) * 1000;
+
+        printf("%d\t%.3f\t\t%.3f\t\t%.3f\n",
+               n, best, avg, worst);
+
+        free(a);
+    }
+
+    return 0;
+}
+
+
+Insertion Sort
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void insertionSort(int a[], int n)
+{
+    for (int i = 1; i < n; i++)
+    {
+        int key = a[i];
+        int j = i - 1;
+
+        while (j >= 0 && a[j] > key)
+        {
+            a[j + 1] = a[j];
+            j--;
+        }
+
+        a[j + 1] = key;
+    }
+}
+
+void fill(int a[], int n, int type)
+{
+    for (int i = 0; i < n; i++)
+    {
+        a[i] = (type == 0) ? i
+               : (type == 1) ? rand() % 10000
+               : n - i;
+    }
+}
+
+int main()
+{
+    int sizes[30] =
+    {
+        500, 1000, 1500, 2000, 2500,
+        3000, 3500, 4000, 4500, 5000,
+        5500, 6000, 6500, 7000, 7500,
+        8000, 8500, 9000, 9500, 10000,
+        10500, 11000, 11500, 12000, 12500,
+        13000, 13500, 14000, 14500, 15000
+    };
+
+    printf("N\tBest(ms)\tAverage(ms)\tWorst(ms)\n");
+
+    for (int t = 0; t < 30; t++)
+    {
+        int n = sizes[t];
+
+        int *a = malloc(n * sizeof(int));
+
+        clock_t s, e;
+
+        // Best case
+        fill(a, n, 0);
+
+        s = clock();
+        insertionSort(a, n);
+        e = clock();
+
+        double best =
+            ((double)(e - s) / CLOCKS_PER_SEC) * 1000;
+
+        // Average case
+        fill(a, n, 1);
+
+        s = clock();
+        insertionSort(a, n);
+        e = clock();
+
+        double avg =
+            ((double)(e - s) / CLOCKS_PER_SEC) * 1000;
+
+        // Worst case
+        fill(a, n, 2);
+
+        s = clock();
+        insertionSort(a, n);
+        e = clock();
+
+        double worst =
+            ((double)(e - s) / CLOCKS_PER_SEC) * 1000;
+
+        printf("%d\t%.3f\t\t%.3f\t\t%.3f\n",
+               n, best, avg, worst);
+
+        free(a);
+    }
+
+    return 0;
+}
+
+
+Bubble sort
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void bubbleSort(int a[], int n)
+{
+    for (int i = 0; i < n - 1; i++)
+    {
+        int swapped = 0;
+
+        for (int j = 0; j < n - i - 1; j++)
+        {
+            if (a[j] > a[j + 1])
+            {
+                int temp = a[j];
+                a[j] = a[j + 1];
+                a[j + 1] = temp;
+
+                swapped = 1;
+            }
+        }
+
+        if (swapped == 0)
+        {
+            break;
+        }
+    }
+}
+
+void fill(int a[], int n, int type)
+{
+    for (int i = 0; i < n; i++)
+    {
+        a[i] = (type == 0) ? i
+               : (type == 1) ? rand() % 10000
+               : n - i;
+    }
+}
+
+int main()
+{
+    int sizes[30] =
+    {
+        500, 1000, 1500, 2000, 2500,
+        3000, 3500, 4000, 4500, 5000,
+        5500, 6000, 6500, 7000, 7500,
+        8000, 8500, 9000, 9500, 10000,
+        10500, 11000, 11500, 12000, 12500,
+        13000, 13500, 14000, 14500, 15000
+    };
+
+    printf("N\tBest(ms)\tAverage(ms)\tWorst(ms)\n");
+
+    for (int t = 0; t < 30; t++)
+    {
+        int n = sizes[t];
+
+        int *a = malloc(n * sizeof(int));
+
+        clock_t s, e;
+
+        // Best case
+        fill(a, n, 0);
+
+        s = clock();
+        bubbleSort(a, n);
+        e = clock();
+
+        double best =
+            ((double)(e - s) / CLOCKS_PER_SEC) * 1000;
+
+        // Average case
+        fill(a, n, 1);
+
+        s = clock();
+        bubbleSort(a, n);
+        e = clock();
+
+        double avg =
+            ((double)(e - s) / CLOCKS_PER_SEC) * 1000;
+
+        // Worst case
+        fill(a, n, 2);
+
+        s = clock();
+        bubbleSort(a, n);
+        e = clock();
+
+        double worst =
+            ((double)(e - s) / CLOCKS_PER_SEC) * 1000;
+
+        printf("%d\t%.3f\t\t%.3f\t\t%.3f\n",
+               n, best, avg, worst);
+
+        free(a);
+    }
+
+    return 0;
+}
+
+
+Merge Sort 
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void merge(int a[], int l, int m, int r)
+{
+    int i, j, k;
+
+    int n1 = m - l + 1;
+    int n2 = r - m;
+
+    int L[n1], R[n2];
+
+    for (i = 0; i < n1; i++)
+        L[i] = a[l + i];
+
+    for (j = 0; j < n2; j++)
+        R[j] = a[m + 1 + j];
+
+    i = j = 0;
+    k = l;
+
+    while (i < n1 && j < n2)
+        a[k++] = (L[i] <= R[j]) ? L[i++] : R[j++];
+
+    while (i < n1)
+        a[k++] = L[i++];
+
+    while (j < n2)
+        a[k++] = R[j++];
+}
+
+void mergeSort(int a[], int l, int r)
+{
+    if (l < r)
+    {
+        int m = (l + r) / 2;
+
+        mergeSort(a, l, m);
+        mergeSort(a, m + 1, r);
+
+        merge(a, l, m, r);
+    }
+}
+
+void fill(int a[], int n, int type)
+{
+    for (int i = 0; i < n; i++)
+    {
+        a[i] = (type == 0) ? i
+               : (type == 1) ? rand() % 10000
+               : n - i;
+    }
+}
+
+int main()
+{
+    int sizes[30] =
+    {
+        500, 1000, 1500, 2000, 2500,
+        3000, 3500, 4000, 4500, 5000,
+        5500, 6000, 6500, 7000, 7500,
+        8000, 8500, 9000, 9500, 10000,
+        10500, 11000, 11500, 12000, 12500,
+        13000, 13500, 14000, 14500, 15000
+    };
+
+    printf("N\tBest(ms)\tAverage(ms)\tWorst(ms)\n");
+
+    for (int t = 0; t < 30; t++)
+    {
+        int n = sizes[t];
+
+        int *a = malloc(n * sizeof(int));
+
+        clock_t s, e;
+
+        // Best case
+        fill(a, n, 0);
+
+        s = clock();
+        mergeSort(a, 0, n - 1);
+        e = clock();
+
+        double best =
+            ((double)(e - s) / CLOCKS_PER_SEC) * 1000;
+
+        // Average case
+        fill(a, n, 1);
+
+        s = clock();
+        mergeSort(a, 0, n - 1);
+        e = clock();
+
+        double avg =
+            ((double)(e - s) / CLOCKS_PER_SEC) * 1000;
+
+        // Worst case
+        fill(a, n, 2);
+
+        s = clock();
+        mergeSort(a, 0, n - 1);
+        e = clock();
+
+        double worst =
+            ((double)(e - s) / CLOCKS_PER_SEC) * 1000;
+
+        printf("%d\t%.3f\t\t%.3f\t\t%.3f\n",
+               n, best, avg, worst);
+
+        free(a);
+    }
+
+    return 0;
+}
+
+
+
+
+Quick Sort 
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void swap(int *a, int *b)
+{
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int partition(int a[], int low, int high)
+{
+    int pivot = a[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; j++)
+    {
+        if (a[j] < pivot)
+        {
+            i++;
+            swap(&a[i], &a[j]);
+        }
+    }
+
+    swap(&a[i + 1], &a[high]);
+
+    return i + 1;
+}
+
+void quickSort(int a[], int low, int high)
+{
+    if (low < high)
+    {
+        int pi = partition(a, low, high);
+
+        quickSort(a, low, pi - 1);
+        quickSort(a, pi + 1, high);
+    }
+}
+
+void fill(int a[], int n, int type)
+{
+    for (int i = 0; i < n; i++)
+    {
+        a[i] = (type == 0) ? i
+               : (type == 1) ? rand() % 10000
+               : n - i;
+    }
+}
+
+int main()
+{
+    int sizes[30] =
+    {
+        500, 1000, 1500, 2000, 2500,
+        3000, 3500, 4000, 4500, 5000,
+        5500, 6000, 6500, 7000, 7500,
+        8000, 8500, 9000, 9500, 10000,
+        10500, 11000, 11500, 12000, 12500,
+        13000, 13500, 14000, 14500, 15000
+    };
+
+    printf("N\tBest(ms)\tAverage(ms)\tWorst(ms)\n");
+
+    for (int t = 0; t < 30; t++)
+    {
+        int n = sizes[t];
+
+        int *a = malloc(n * sizeof(int));
+
+        clock_t s, e;
+
+        // Best case
+        fill(a, n, 0);
+
+        s = clock();
+        quickSort(a, 0, n - 1);
+        e = clock();
+
+        double best =
+            ((double)(e - s) / CLOCKS_PER_SEC) * 1000;
+
+        // Average case
+        fill(a, n, 1);
+
+        s = clock();
+        quickSort(a, 0, n - 1);
+        e = clock();
+
+        double avg =
+            ((double)(e - s) / CLOCKS_PER_SEC) * 1000;
+
+        // Worst case
+        fill(a, n, 2);
+
+        s = clock();
+        quickSort(a, 0, n - 1);
+        e = clock();
+
+        double worst =
+            ((double)(e - s) / CLOCKS_PER_SEC) * 1000;
+
+        printf("%d\t%.3f\t\t%.3f\t\t%.3f\n",
+               n, best, avg, worst);
+
+        free(a);
+    }
+
+    return 0;
+}

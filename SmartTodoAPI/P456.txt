@@ -1,0 +1,491 @@
+KRUSKAL'S ALGORITHM (GREEDY TECHNIQUE) 
+
+
+import java.util.Scanner;
+
+class Edge {
+
+    int u, v, w;
+}
+
+public class KruskalAlgorithm {
+
+    static final int MAX = 50;
+
+    static Edge[] edges = new Edge[MAX];
+    static Edge[] result = new Edge[MAX];
+
+    static int[] parent = new int[MAX];
+
+    static int n, m;
+
+    // FIND function
+    static int find(int i) {
+
+        while (parent[i] != 0)
+            i = parent[i];
+
+        return i;
+    }
+
+    // UNION function
+    static void unionSet(int i, int j) {
+
+        parent[j] = i;
+    }
+
+    // KRUSKAL function
+    static void kruskal() {
+
+        int i, j, a, b;
+
+        int k = 1;
+        int mincost = 0;
+
+        Edge temp;
+
+        // Step 1: Sort edges by weight
+        for (i = 1; i <= m; i++) {
+
+            for (j = 1; j <= m - i; j++) {
+
+                if (edges[j].w > edges[j + 1].w) {
+
+                    temp = edges[j];
+                    edges[j] = edges[j + 1];
+                    edges[j + 1] = temp;
+                }
+            }
+        }
+
+        // Step 2: Kruskal Logic
+        for (i = 1; i <= m; i++) {
+
+            a = find(edges[i].u);
+            b = find(edges[i].v);
+
+            if (a != b) {
+
+                result[k] = edges[i];
+
+                k++;
+
+                mincost += edges[i].w;
+
+                unionSet(a, b);
+            }
+        }
+
+        // Print MST
+        System.out.println("\nEdges in Minimum Spanning Tree:");
+
+        for (i = 1; i < k; i++) {
+
+            System.out.println(
+                    result[i].u + " -- " +
+                    result[i].v +
+                    " (Weight = " +
+                    result[i].w + ")"
+            );
+        }
+
+        System.out.println("\nMinimum Cost = " + mincost);
+    }
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        // Initialize edge objects
+        for (int i = 0; i < MAX; i++) {
+
+            edges[i] = new Edge();
+            result[i] = new Edge();
+        }
+
+        System.out.print("Enter number of vertices: ");
+        n = sc.nextInt();
+
+        System.out.print("Enter number of edges: ");
+        m = sc.nextInt();
+
+        System.out.println("Enter edges (u v w):");
+
+        for (int i = 1; i <= m; i++) {
+
+            edges[i].u = sc.nextInt();
+            edges[i].v = sc.nextInt();
+            edges[i].w = sc.nextInt();
+        }
+
+        // Initialize parent array
+        for (int i = 1; i <= n; i++) {
+
+            parent[i] = 0;
+        }
+
+        kruskal();
+
+        sc.close();
+    }
+}
+
+
+
+HUFFMAN CODING
+
+
+import java.util.PriorityQueue;
+
+class HuffmanNode {
+
+    char data;
+    int freq;
+
+    HuffmanNode left;
+    HuffmanNode right;
+
+    HuffmanNode(char data, int freq) {
+        this.data = data;
+        this.freq = freq;
+    }
+}
+
+public class HuffmanCoding {
+
+    static void printCodes(HuffmanNode root, String code) {
+
+        if (root.left == null && root.right == null) {
+
+            System.out.println(root.data + ": " + code);
+            return;
+        }
+
+        printCodes(root.left, code + "0");
+        printCodes(root.right, code + "1");
+    }
+
+    public static void main(String[] args) {
+
+        char arr[] = { 'a', 'b', 'c', 'd', 'e', 'f' };
+        int freq[] = { 5, 9, 12, 13, 16, 45 };
+
+        PriorityQueue<HuffmanNode> pq =
+                new PriorityQueue<>((a, b) -> a.freq - b.freq);
+
+        for (int i = 0; i < arr.length; i++) {
+
+            pq.add(new HuffmanNode(arr[i], freq[i]));
+        }
+
+        while (pq.size() > 1) {
+
+            HuffmanNode left = pq.poll();
+            HuffmanNode right = pq.poll();
+
+            HuffmanNode top =
+                    new HuffmanNode('$', left.freq + right.freq);
+
+            top.left = left;
+            top.right = right;
+
+            pq.add(top);
+        }
+
+        HuffmanNode root = pq.poll();
+
+        printCodes(root, "");
+    }
+}
+
+
+
+
+NAIVE RECURSION (0-1 KNAPSACK)
+
+
+import java.util.Scanner;
+
+public class KnapsackRecursive {
+
+    static int max(int a, int b) {
+
+        return (a > b) ? a : b;
+    }
+
+    static int knapsack(int W, int wt[], int val[], int n) {
+
+        if (n == 0 || W == 0)
+            return 0;
+
+        if (wt[n - 1] > W)
+            return knapsack(W, wt, val, n - 1);
+
+        else
+            return max(
+                    val[n - 1] +
+                    knapsack(W - wt[n - 1], wt, val, n - 1),
+
+                    knapsack(W, wt, val, n - 1)
+            );
+    }
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter no. of items: ");
+        int n = sc.nextInt();
+
+        int wt[] = new int[n];
+        int val[] = new int[n];
+
+        System.out.println("Enter weights of items:");
+
+        for (int i = 0; i < n; i++)
+            wt[i] = sc.nextInt();
+
+        System.out.println("Enter values of items:");
+
+        for (int i = 0; i < n; i++)
+            val[i] = sc.nextInt();
+
+        System.out.print("Enter capacity of knapsack: ");
+        int W = sc.nextInt();
+
+        int result = knapsack(W, wt, val, n);
+
+        System.out.println("Max value in knapsack = " + result);
+
+        sc.close();
+    }
+}
+
+
+
+DYNAMIC PROGRAMMING (0-1 KNAPSACK)
+
+
+
+
+import java.util.Scanner;
+
+public class KnapsackDP {
+
+    static int max(int a, int b) {
+
+        return (a > b) ? a : b;
+    }
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter no of items: ");
+        int n = sc.nextInt();
+
+        int wt[] = new int[n];
+        int val[] = new int[n];
+
+        System.out.println("Enter weights of items:");
+
+        for (int i = 0; i < n; i++)
+            wt[i] = sc.nextInt();
+
+        System.out.println("Enter values of items:");
+
+        for (int i = 0; i < n; i++)
+            val[i] = sc.nextInt();
+
+        System.out.print("Enter capacity of knapsack: ");
+        int W = sc.nextInt();
+
+        int dp[][] = new int[n + 1][W + 1];
+
+        for (int i = 0; i <= n; i++) {
+
+            for (int w = 0; w <= W; w++) {
+
+                if (i == 0 || w == 0) {
+
+                    dp[i][w] = 0;
+                }
+
+                else if (wt[i - 1] <= w) {
+
+                    dp[i][w] = max(
+                            val[i - 1] +
+                            dp[i - 1][w - wt[i - 1]],
+
+                            dp[i - 1][w]
+                    );
+                }
+
+                else {
+
+                    dp[i][w] = dp[i - 1][w];
+                }
+            }
+        }
+
+        System.out.println("Maximum value in knapsack = " + dp[n][W]);
+
+        sc.close();
+    }
+}
+
+
+
+
+BACKTRACKING ( 4 QUEEN)
+
+
+public class NQueenBacktracking {
+
+    static final int N = 4;
+
+    static int board[][] = new int[N][N];
+
+    static void printSolution() {
+
+        for (int i = 0; i < N; i++) {
+
+            for (int j = 0; j < N; j++) {
+
+                System.out.print(" " + board[i][j] + " ");
+            }
+
+            System.out.println();
+        }
+    }
+
+    static boolean isSafe(int row, int col) {
+
+        int i, j;
+
+        for (i = 0; i < row; i++) {
+
+            if (board[i][col] == 1)
+                return false;
+        }
+
+        for (i = row, j = col;
+             i >= 0 && j >= 0;
+             i--, j--) {
+
+            if (board[i][j] == 1)
+                return false;
+        }
+
+        for (i = row, j = col;
+             i >= 0 && j < N;
+             i--, j++) {
+
+            if (board[i][j] == 1)
+                return false;
+        }
+
+        return true;
+    }
+
+    static boolean solveNQ(int row) {
+
+        if (row >= N)
+            return true;
+
+        for (int col = 0; col < N; col++) {
+
+            if (isSafe(row, col)) {
+
+                board[row][col] = 1;
+
+                if (solveNQ(row + 1))
+                    return true;
+
+                board[row][col] = 0;
+            }
+        }
+
+        return false;
+    }
+
+    public static void main(String[] args) {
+
+        if (solveNQ(0))
+            printSolution();
+
+        else
+            System.out.println("No solution exists");
+    }
+}
+
+
+
+
+
+BRANCH AND BOUND (4 QUEEN) 
+
+
+
+
+public class NQueenBranchBound {
+
+    static final int N = 4;
+
+    static int board[][] = new int[N][N];
+
+    static int col[] = new int[N];
+    static int diag1[] = new int[2 * N];
+    static int diag2[] = new int[2 * N];
+
+    static void printSolution() {
+
+        for (int i = 0; i < N; i++) {
+
+            for (int j = 0; j < N; j++) {
+
+                System.out.print(" " + board[i][j] + " ");
+            }
+
+            System.out.println();
+        }
+    }
+
+    static boolean solveNQ(int row) {
+
+        if (row == N) {
+
+            printSolution();
+            return true;
+        }
+
+        for (int c = 0; c < N; c++) {
+
+            if (col[c] == 0 &&
+                diag1[row - c + N - 1] == 0 &&
+                diag2[row + c] == 0) {
+
+                board[row][c] = 1;
+                col[c] = 1;
+                diag1[row - c + N - 1] = 1;
+                diag2[row + c] = 1;
+
+                if (solveNQ(row + 1))
+                    return true;
+
+                board[row][c] = 0;
+                col[c] = 0;
+                diag1[row - c + N - 1] = 0;
+                diag2[row + c] = 0;
+            }
+        }
+
+        return false;
+    }
+
+    public static void main(String[] args) {
+
+        if (!solveNQ(0))
+            System.out.println("No solution exists");
+    }
+}

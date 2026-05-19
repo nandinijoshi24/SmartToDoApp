@@ -1,0 +1,1240 @@
+SIMPLE REFLEX AGENT 
+
+
+import random
+
+# ==========================
+# Vacuum Environment
+# ==========================
+
+class VacuumEnvironment:
+
+    def __init__(self):
+
+        self.rooms = {
+            'A': random.choice(['Dirty', 'Clean']),
+            'B': random.choice(['Dirty', 'Clean'])
+        }
+
+        self.agent_location = random.choice(['A', 'B'])
+
+    # Get current percept
+    def get_percept(self):
+
+        return self.agent_location, self.rooms[self.agent_location]
+
+    # Execute action
+    def execute_action(self, action):
+
+        if action == 'Suck':
+            self.rooms[self.agent_location] = 'Clean'
+
+        elif action == 'Right':
+            self.agent_location = 'B'
+
+        elif action == 'Left':
+            self.agent_location = 'A'
+
+    # Check if environment is clean
+    def is_clean(self):
+
+        return self.rooms['A'] == 'Clean' and self.rooms['B'] == 'Clean'
+
+
+# ==========================
+# Simple Reflex Agent
+# ==========================
+
+class SimpleReflexAgent:
+
+    def choose_action(self, percept):
+
+        location, status = percept
+
+        if status == 'Dirty':
+            return 'Suck'
+
+        elif location == 'A':
+            return 'Right'
+
+        else:
+            return 'Left'
+
+
+# ==========================
+# Simulation
+# ==========================
+
+env = VacuumEnvironment()
+agent = SimpleReflexAgent()
+
+print("Simple Reflex Agent Simulation")
+print("Initial State:", env.rooms)
+print("Agent Location:", env.agent_location)
+print()
+
+steps = 0
+
+while steps < 10:
+
+    percept = env.get_percept()
+
+    action = agent.choose_action(percept)
+
+    env.execute_action(action)
+
+    steps += 1
+
+    print(
+        f"Step {steps}: Action={action}, "
+        f"State={env.rooms}, "
+        f"Agent at {env.agent_location}"
+    )
+
+print("\nFinal State:", env.rooms)
+
+
+
+An agent is an entity that perceives and acts. A rational agent is one that acts so as
+to achieve the best outcome or, when there is uncertainty, the best expected outcome.
+Abstractly, an agent is a function from percept histories to actions: f: P* →A
+where:
+
+• P∗: set of all possible percept histories
+• A: set of possible actions
+• f: agent function mapping percept sequences to actions
+
+For any given class of environments and tasks, we seek the agent (or class of agents) with the
+best performance (a rational agent). Computational limitations make perfect rationality
+unachievable. This entails us to design best program for given machine resources
+
+Feature Simple Reflex Agent Model-Based Agent
+
+Uses Memory No ✔ Yes
+Internal Model No ✔ Yes
+Handles Partial Observability No ✔ Yes
+Performance May be suboptimal. More efficient
+Rationality Limited Improved
+
+
+
+
+MODEL BASED AGENT
+
+
+
+import random
+
+# ==========================
+# Vacuum Environment
+# ==========================
+
+class VacuumEnvironment:
+
+    def __init__(self):
+
+        self.rooms = {
+            'A': random.choice(['Dirty', 'Clean']),
+            'B': random.choice(['Dirty', 'Clean'])
+        }
+
+        self.agent_location = random.choice(['A', 'B'])
+
+    def get_percept(self):
+        return self.agent_location, self.rooms[self.agent_location]
+
+    def execute_action(self, action):
+
+        if action == 'Suck':
+            self.rooms[self.agent_location] = 'Clean'
+
+        elif action == 'Right':
+            self.agent_location = 'B'
+
+        elif action == 'Left':
+            self.agent_location = 'A'
+
+
+# ==========================
+# Model-Based Agent
+# ==========================
+
+class ModelBasedAgent:
+
+    def __init__(self):
+
+        # Internal model (memory of world)
+        self.model = {
+            'A': 'Unknown',
+            'B': 'Unknown'
+        }
+
+        self.location = None
+
+    # Update internal model using percept
+    def update_model(self, percept):
+
+        location, status = percept
+        self.location = location
+        self.model[location] = status
+
+    # Decide action based on model
+    def choose_action(self):
+
+        # If current room is dirty → clean it
+        if self.model[self.location] == 'Dirty':
+            return 'Suck'
+
+        # If in A, go to B if needed
+        if self.location == 'A':
+            return 'Right'
+
+        # If in B, go to A if needed
+        if self.location == 'B':
+            return 'Left'
+
+
+# ==========================
+# Simulation
+# ==========================
+
+env = VacuumEnvironment()
+agent = ModelBasedAgent()
+
+print("Model-Based Vacuum Agent Simulation\n")
+
+print("Initial State:", env.rooms)
+print("Initial Location:", env.agent_location)
+print()
+
+steps = 0
+
+while steps < 10:
+
+    percept = env.get_percept()
+
+    # Update agent memory
+    agent.update_model(percept)
+
+    # Decide action
+    action = agent.choose_action()
+
+    # Execute action in environment
+    env.execute_action(action)
+
+    steps += 1
+
+    print(f"Step {steps}: Action={action}, "
+          f"Location={env.agent_location}, "
+          f"Rooms={env.rooms}, "
+          f"Memory={agent.model}")
+
+    # Stop early if everything is clean
+    if env.rooms['A'] == 'Clean' and env.rooms['B'] == 'Clean':
+        print("\nEnvironment fully clean!")
+        break
+
+
+
+
+
+
+MISSIONARIES AND CANNIBALS
+
+
+
+from collections import deque
+
+# Possible boat moves (missionaries, cannibals)
+MOVES = [(1, 0), (2, 0), (0, 1), (0, 2), (1, 1)]
+
+
+def is_valid(m, c):
+    """
+    Check if state satisfies constraints.
+    m = missionaries on left side
+    c = cannibals on left side
+    """
+
+    # Invalid counts
+    if m < 0 or c < 0 or m > 3 or c > 3:
+        return False
+
+    # Left side constraint
+    if m > 0 and m < c:
+        return False
+
+    # Right side constraint
+    bm, bc = 3 - m, 3 - c
+
+    if bm > 0 and bm < bc:
+        return False
+
+    return True
+
+
+def successors(state):
+    """
+    Generate next possible states.
+    state = (missionaries, cannibals, boat_side)
+    """
+
+    m, c, boat = state
+    next_states = []
+
+    for dm, dc in MOVES:
+
+        if boat == 'A':   # Boat on left side
+            new_state = (m - dm, c - dc, 'B')
+
+        else:             # Boat on right side
+            new_state = (m + dm, c + dc, 'A')
+
+        if is_valid(new_state[0], new_state[1]):
+            next_states.append(new_state)
+
+    return next_states
+
+
+def goal_test(state):
+    return state[0] == 0 and state[1] == 0
+
+
+def bfs():
+
+    start = (3, 3, 'A')
+
+    # Queue stores (state, path)
+    queue = deque([(start, [start])])
+
+    visited = set()
+
+    while queue:
+
+        state, path = queue.popleft()
+
+        if state in visited:
+            continue
+
+        visited.add(state)
+
+        # Goal check
+        if goal_test(state):
+            return path
+
+        # Generate successors
+        for next_state in successors(state):
+
+            if next_state not in visited:
+                queue.append((next_state, path + [next_state]))
+
+    return None
+
+
+# ---------------- Driver Code ----------------
+solution = bfs()
+
+if solution:
+
+    print("Solution Found:\n")
+
+    for step in solution:
+        print(step)
+
+else:
+    print("No solution exists.")
+
+
+
+In Artificial Intelligence, many problems can be represented as a state space search
+problem, where:
+• Each state represents a configuration of the world
+• Actions cause transitions between states
+• A goal test identifies solution states
+• A path cost measures solution quality
+The Missionaries and Cannibals problem is a classical AI problem that illustrates:
+• State representation
+• Constraint handling
+• Search-based problem solving
+Problem Description: Missionaries and Cannibals
+There are:
+• 3 missionaries (M)
+• 3 cannibals (C)
+• One boat that can carry at most two people
+Rules / Constraints
+• If cannibals outnumber missionaries on either bank, missionaries are killed
+• Boat can move from one bank to the other with valid occupants
+Problem Formulation
+State Representation:
+A state is represented as:
+(A_M, A_C, Boat)
+Where:
+• A_M = Missionaries on Bank A
+• A_C = Cannibals on Bank A
+• Boat ∈ {A, B}
+
+Bank B values are inferred:
+B_M = 3 − A_M
+B_C = 3 − A_C
+Initial State
+(3, 3, 'A')
+Goal State
+(0, 0, X)
+(X → boat position does not matter)
+Actions (Operators)
+Move(L1, L2, m, c)
+Possible moves:
+• (1M), (2M)
+• (1C), (2C)
+• (1M,1C)
+Transition Model
+Moves the boat and updates the number of missionaries and cannibals on each bank, provided
+constraints are satisfied.
+Goal Test
+State is goal if A_M == 0 and A_C == 0
+Path Cost
+• Each boat crossing has a cost of 1
+• Total path cost = number of moves
+Algorithm Used:
+Breadth First Search (BFS)
+• Guarantees solution
+• Finds optimal (minimum-step) solution
+
+
+
+
+
+
+
+HILL CLIMBING (8 PUZZLE) 
+
+
+
+# ---------------- Goal State ----------------
+GOAL = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 0]
+]
+
+# ---------------- Heuristic ----------------
+def heuristic(state):
+    """
+    Misplaced tile heuristic (ignores blank tile)
+    """
+    h = 0
+
+    for i in range(3):
+        for j in range(3):
+            if state[i][j] != 0 and state[i][j] != GOAL[i][j]:
+                h += 1
+
+    return h
+
+
+# ---------------- Utilities ----------------
+def find_blank(state):
+
+    for i in range(3):
+        for j in range(3):
+
+            if state[i][j] == 0:
+                return i, j
+
+
+def generate_neighbors(state):
+
+    neighbors = []
+
+    x, y = find_blank(state)
+
+    # Possible moves
+    moves = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+    for dx, dy in moves:
+
+        nx, ny = x + dx, y + dy
+
+        # Check valid move
+        if 0 <= nx < 3 and 0 <= ny < 3:
+
+            # Copy current state
+            new_state = [row[:] for row in state]
+
+            # Swap blank with neighbor
+            new_state[x][y], new_state[nx][ny] = \
+                new_state[nx][ny], new_state[x][y]
+
+            neighbors.append(new_state)
+
+    return neighbors
+
+
+# ---------------- Hill Climbing ----------------
+def steepest_ascent_hill_climbing(initial_state):
+
+    current = initial_state
+    current_h = heuristic(current)
+
+    print("Initial State (h =", current_h, ")")
+
+    for row in current:
+        print(row)
+
+    print()
+
+    while True:
+
+        # -------- Goal Test --------
+        if current_h == 0:
+            print("Goal reached successfully.")
+            return current
+
+        neighbors = generate_neighbors(current)
+
+        # List of tuples -> (heuristic_value, state)
+        h_values = [(heuristic(n), n) for n in neighbors]
+
+        best_h, best_state = h_values[0]
+
+        # Find best neighbor
+        for h, state in h_values:
+
+            if h < best_h:
+                best_h = h
+                best_state = state
+
+        # -------- Local Maximum --------
+        if best_h > current_h:
+            print("Local Maximum encountered. No better neighbor exists.")
+            return current
+
+        # -------- Plateau --------
+        if best_h == current_h:
+            print("Plateau encountered. All neighbors have same heuristic value.")
+            return current
+
+        # -------- Move to Better State --------
+        best_h < current_h
+
+        current = best_state
+        current_h = best_h
+
+        print("Moved to better state (h =", current_h, ")")
+
+        for row in current:
+            print(row)
+
+        print()
+
+
+# ---------------- Driver Code ----------------
+initial_state = [
+    [1, 2, 3],
+    [4, 0, 6],
+    [7, 5, 8]
+]
+
+final_state = steepest_ascent_hill_climbing(initial_state)
+
+print("\nFinal State:")
+
+for row in final_state:
+    print(row)
+
+
+
+A* ALGORITHM (8 PUZZLE)
+
+
+import heapq
+
+# ==========================
+# Goal State
+# ==========================
+GOAL_STATE = (
+    1, 2, 3,
+    4, 5, 6,
+    7, 8, 0   
+)
+
+# ==========================
+# Heuristic Function (Manhattan Distance)
+# ==========================
+def manhattan_distance(state):
+    distance = 0
+
+    for i in range(9):
+        if state[i] != 0:
+            goal_index = GOAL_STATE.index(state[i])
+
+            x1, y1 = divmod(i, 3)
+            x2, y2 = divmod(goal_index, 3)
+
+            distance += abs(x1 - x2) + abs(y1 - y2)
+
+    return distance
+
+
+# ==========================
+# Generate Neighbor States
+# ==========================
+def get_neighbors(state):
+
+    neighbors = []
+
+    blank_index = state.index(0)
+    x, y = divmod(blank_index, 3)
+
+    moves = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # up, down, left, right
+
+    for dx, dy in moves:
+        nx, ny = x + dx, y + dy
+
+        if 0 <= nx < 3 and 0 <= ny < 3:
+
+            new_index = nx * 3 + ny
+            new_state = list(state)
+
+            # swap blank with adjacent tile
+            new_state[blank_index], new_state[new_index] = new_state[new_index], new_state[blank_index]
+
+            neighbors.append(tuple(new_state))
+
+    return neighbors
+
+
+# ==========================
+# A* Search Algorithm
+# ==========================
+def a_star(start_state):
+
+    open_list = []
+    heapq.heappush(open_list, (0 + manhattan_distance(start_state), 0, start_state, []))
+
+    closed_set = set()
+
+    while open_list:
+
+        f, g, current_state, path = heapq.heappop(open_list)
+
+        # Goal check
+        if current_state == GOAL_STATE:
+            return path + [current_state]
+
+        closed_set.add(current_state)
+
+        # Expand neighbors
+        for neighbor in get_neighbors(current_state):
+
+            if neighbor not in closed_set:
+
+                new_g = g + 1
+                new_f = new_g + manhattan_distance(neighbor)
+
+                heapq.heappush(
+                    open_list,
+                    (new_f, new_g, neighbor, path + [current_state])
+                )
+
+    return None
+
+
+# ==========================
+# Utility path
+# ==========================
+def print_solution (solution):
+    for step, state in enumerate(solution) :
+        print(f"step {step}:")
+        for i in range(0, 9, 3):
+            print(state[i:i+3])
+            print()
+            
+# ==========================
+# Driver code
+# ==========================
+if __name__ == "__main__":
+    start_state = (
+    2,4 , 3,
+    1,0 , 6,
+    7, 5, 8
+    )
+    solution = a_star(start_state)
+    
+# Print Solution
+if solution:
+    print("Solution found!:")
+    print_solution(solution)
+else:
+    print("No solution exists.")
+
+
+
+
+Algorithm Used: A* Search
+Evaluation Function
+f(n) = g(n) + h(n)
+Where:
+• g(n) = cost from start state to current state
+• h(n) = heuristic estimate from current state to goal
+Heuristic Function (Admissible)
+Manhattan Distance
+The Manhattan distance heuristic is defined as the sum of the absolute distances of each tile
+from its goal position.
+Properties:
+• Admissible
+• Consistent
+• Guarantees optimal solution in A*
+
+
+
+
+
+
+CONSTRAINT SATISFACTION PROBLEM
+
+
+import copy
+def solve_n_queens(N):
+    domains = {row: set(range(N)) for row in range(N)}
+    assignment = {}
+    return backtracking_search(assignment, domains, N)
+def backtracking_search(assignment, domains, N):
+    # Goal Test
+    if len(assignment) == N:
+        return assignment
+    # 1. MRV Heuristic (Minimum Remaining Values)
+    unassigned_vars = [row for row in range(N) if row not in assignment]
+    next_var = min(unassigned_vars, key=lambda var: len(domains[var]))
+    # Try each value in domain
+    for value in list(domains[next_var]):
+        if is_consistent(next_var, value, assignment):
+            assignment[next_var] = value
+            original_domains = copy.deepcopy(domains)
+            # Forward Checking
+            if forward_checking(next_var, value, assignment, domains, N):
+                result = backtracking_search(assignment, domains, N)
+                if result is not None:
+                    return result
+            # Backtrack
+            del assignment[next_var]
+            domains = original_domains
+    return None
+def is_consistent(row, col, assignment):
+    """Check column and diagonal conflicts."""
+    for r, c in assignment.items():
+        if c == col or \
+           r + c == row + col or \
+           r - c == row - col:
+            return False
+    return True
+def forward_checking(row, col, assignment, domains, N):
+    """
+    Remove inconsistent values from domains of unassigned variables.
+    """
+    for next_row in range(N):
+        if next_row not in assignment:
+            conflicts = {
+                col,
+                col + (next_row - row),
+                col - (next_row - row)
+            }
+            domains[next_row] -= {
+                v for v in conflicts if 0 <= v < N
+            }
+            if not domains[next_row]:
+                return False
+    return True
+# Example Usage
+N = 4
+solution = solve_n_queens(N)
+
+if solution:
+    print(f"Solution for {N}-Queens: {solution}")
+else:
+    print(f"No solution found for {N}-Queens.")
+
+
+
+
+
+
+The N-Queens Problem consists of placing N queens on an N × N chessboard such that:
+ No two queens attack each other
+ No two queens share the same:
+o Row
+o Column
+o Diagonal
+
+The objective is to find a valid arrangement of queens that satisfies all constraints.
+
+Problem Formulation (CSP Components)
+1. Variables
+Each row represents one variable:
+X={Q0,Q1,Q2,...,QN−1}X = \{Q_0, Q_1, Q_2, ..., Q_{N-1}\}X={Q0,Q1,Q2,...,QN−1}
+Where
+Qi = Column position of queen in row i
+
+2. Domains
+
+Each variable can take values:
+Di={0,1,2,...,N−1}D_i = \{0,1,2,...,N-1\}Di={0,1,2,...,N−1}
+(Each value represents a column index)
+
+3. Constraints
+For any two queens Qi and Qj:
+1. Column Constraint:
+Qi≠QjQ_i \neq Q_jQi
+2. Diagonal Constraint:
+∣Qi−Qj∣≠∣i−j∣|Q_i - Q_j| \neq |i - j|∣Qi−Qj∣ ∣i−j∣
+
+Algorithm Used
+Backtracking with MRV and Forward Checking
+1. Backtracking Search
+ A depth-first search technique.
+ Assigns values to variables one by one.
+ If a constraint is violated, it backtracks and tries another value.
+2. Variable Ordering (MRV Heuristic)
+ MRV (Minimum Remaining Values) selects the variable with the smallest remaining
+domain.
+ Helps in early detection of failure.
+ Reduces the branching factor.
+3. Constraint Propagation (Forward Checking)
+ After assigning a value to a variable:
+o Removes inconsistent values from domains of unassigned variables.
+ If any domain becomes empty → Backtrack immediately.
+ Improves efficiency by pruning the search space.
+
+
+
+
+
+
+MINIMAX ALGORITHM
+
+
+import math
+player = 'x'
+opponent = 'o'
+# Check if moves are left
+def is_moves_left(board):
+    for row in board:
+        if '_' in row:
+            return True
+    return False
+# Evaluation function
+def evaluate(board):
+    # Rows
+    for i in range(3):
+        if board[i][0] != '_' and board[i][0] == board[i][1] == board[i][2]:
+            if board[i][0] == player:
+                return 10
+            elif board[i][0] == opponent:
+                return -10
+    # Columns
+    for i in range(3):
+        if board[0][i] != '_' and board[0][i] == board[1][i] == board[2][i]:
+            if board[0][i] == player:
+                return 10
+            elif board[0][i] == opponent:
+                return -10
+    # Diagonals
+    if board[0][0] != '_' and board[0][0] == board[1][1] == board[2][2]:
+        if board[0][0] == player:
+            return 10
+        elif board[0][0] == opponent:
+            return -10
+    if board[0][2] != '_' and board[0][2] == board[1][1] == board[2][0]:
+        if board[0][2] == player:
+            return 10
+        elif board[0][2] == opponent:
+            return -10
+    return 0
+# Minimax function
+def minimax(board, is_maximizing):
+    score = evaluate(board)
+    # Terminal states
+    if score == 10:
+        return score
+    if score == -10:
+        return score
+    if not is_moves_left(board):
+        return 0
+    # Maximizer (AI)
+    if is_maximizing:
+        best = -math.inf
+        for i in range(3):
+            for j in range(3):
+                if board[i][j] == '_':
+                    board[i][j] = player
+                    best = max(best, minimax(board, False))
+                    board[i][j] = '_'
+        return best
+    # Minimizer (Opponent)
+    else:
+        best = math.inf
+        for i in range(3):
+            for j in range(3):
+                if board[i][j] == '_':
+                    board[i][j] = opponent
+                    best = min(best, minimax(board, True))
+                    board[i][j] = '_'
+        return best
+# Find best move for AI
+def find_best_move(board):
+    best_val = -math.inf
+    best_move = (-1, -1)
+    for i in range(3):
+        for j in range(3):
+            if board[i][j] == '_':
+                board[i][j] = player
+                move_val = minimax(board, False)
+                board[i][j] = '_'
+                if move_val > best_val:
+                    best_move = (i, j)
+                    best_val = move_val
+    return best_move
+# Driver code
+board = [
+    ['x', 'o', 'x'],
+    ['o', 'o', 'x'],
+    ['_', '_', '_']
+]
+move = find_best_move(board)
+print("Best Move:")
+print("Row:", move[0], "Col:", move[1])
+
+
+
+Develop a program to implement adversarial search algorithms, namely Minimax and
+Alpha-Beta Pruning, to enable a computer to play the Tic-Tac-Toe game optimally against a
+human opponent.
+The program should:
+ Evaluate game states
+ Choose the best possible move
+ Ensure optimal play by the AI player
+
+Problem Formulation
+1. Game Type
+ Two-player game
+ Zero-sum game
+ Deterministic
+ Fully observable
+In Tic-Tac-Toe:
+ One player is MAX (AI)
+ Other player is MIN (Human)
+
+2. State
+A 3 × 3 board configuration representing the current placement of:
+
+ X (AI)
+ O (Human)
+ Empty spaces
+
+3. Initial State
+An empty 3 × 3 Tic-Tac-Toe board.
+
+4. Actions
+A player can place their symbol (X or O) in any empty cell.
+
+5. Transition Model
+Placing a symbol in an empty cell changes the board state.
+
+6. Terminal Test
+The game ends when:
+ A player wins (3 in a row: row, column, or diagonal), or
+ The board is full (Draw).
+
+7. Utility Function
+For terminal states:
+ +1 → AI (MAX) wins
+ −1 → Human (MIN) wins
+ 0 → Draw
+
+Algorithm Used
+1. Minimax Algorithm
+Minimax is a recursive adversarial search algorithm used for decision-making in two-player
+games.
+
+Working:
+1. Generate all possible moves.
+2. Recursively evaluate game states.
+3. MAX player chooses the move with the maximum utility.
+4. MIN player chooses the move with the minimum utility.
+5. Continue until terminal state is reached.
+Characteristics:
+ Complete
+ Optimal (if full tree explored)
+ Time Complexity: O(b^d)
+ Space Complexity: O(bd)
+Where:
+ b = branching factor
+ d = depth of game tree
+
+
+
+
+
+GAN / VAES
+
+
+
+import tensorflow as tf
+from tensorflow.keras import layers
+import numpy as np
+import matplotlib.pyplot as plt
+
+# ==========================
+# Load and Prepare Dataset
+# ==========================
+
+# Load MNIST dataset
+(x_train, _), (_, _) = tf.keras.datasets.mnist.load_data()
+
+# Normalize images
+x_train = x_train / 255.0
+
+# Reshape images to (28,28,1)
+x_train = x_train.reshape(-1, 28, 28, 1)
+
+# Dataset parameters
+BUFFER_SIZE = 60000
+BATCH_SIZE = 256
+
+# Create dataset
+dataset = tf.data.Dataset.from_tensor_slices(x_train)
+dataset = dataset.shuffle(BUFFER_SIZE).batch(BATCH_SIZE, drop_remainder=True)
+
+# ==========================
+# Generator Model
+# ==========================
+
+def build_generator():
+
+    model = tf.keras.Sequential()
+
+    # Input layer
+    model.add(layers.Input(shape=(100,)))
+
+    # Hidden layer
+    model.add(layers.Dense(128, activation='relu'))
+
+    # Output layer
+    model.add(layers.Dense(784, activation='sigmoid'))
+
+    # Reshape into image
+    model.add(layers.Reshape((28, 28, 1)))
+
+    return model
+
+# ==========================
+# Discriminator Model
+# ==========================
+
+def build_discriminator():
+
+    model = tf.keras.Sequential()
+
+    # Input image
+    model.add(layers.Input(shape=(28, 28, 1)))
+
+    # Flatten image
+    model.add(layers.Flatten())
+
+    # Hidden layer
+    model.add(layers.Dense(128, activation='relu'))
+
+    # Output layer
+    model.add(layers.Dense(1, activation='sigmoid'))
+
+    return model
+
+# Create models
+generator = build_generator()
+discriminator = build_discriminator()
+
+# ==========================
+# Loss Functions
+# ==========================
+
+cross_entropy = tf.keras.losses.BinaryCrossentropy()
+
+# Generator Loss
+def generator_loss(fake_output):
+
+    return cross_entropy(tf.ones_like(fake_output), fake_output)
+
+# Discriminator Loss
+def discriminator_loss(real_output, fake_output):
+
+    real_loss = cross_entropy(
+        tf.ones_like(real_output),
+        real_output
+    )
+
+    fake_loss = cross_entropy(
+        tf.zeros_like(fake_output),
+        fake_output
+    )
+
+    total_loss = real_loss + fake_loss
+
+    return total_loss
+
+# ==========================
+# Optimizers
+# ==========================
+
+gen_optimizer = tf.keras.optimizers.Adam(1e-4)
+
+disc_optimizer = tf.keras.optimizers.Adam(1e-4)
+
+# ==========================
+# Training Parameters
+# ==========================
+
+EPOCHS = 20
+noise_dim = 100
+
+gen_losses = []
+disc_losses = []
+
+# ==========================
+# Training Loop
+# ==========================
+
+for epoch in range(EPOCHS):
+
+    for image_batch in dataset:
+
+        # Generate random noise
+        noise = tf.random.normal([BATCH_SIZE, noise_dim])
+
+        with tf.GradientTape() as gen_tape, \
+             tf.GradientTape() as disc_tape:
+
+            # Generate fake images
+            generated_images = generator(noise, training=True)
+
+            # Discriminator predictions
+            real_output = discriminator(image_batch, training=True)
+
+            fake_output = discriminator(generated_images, training=True)
+
+            # Calculate losses
+            gen_loss = generator_loss(fake_output)
+
+            disc_loss = discriminator_loss(
+                real_output,
+                fake_output
+            )
+
+        # Generator gradients
+        gradients_of_generator = gen_tape.gradient(
+            gen_loss,
+            generator.trainable_variables
+        )
+
+        # Discriminator gradients
+        gradients_of_discriminator = disc_tape.gradient(
+            disc_loss,
+            discriminator.trainable_variables
+        )
+
+        # Apply generator gradients
+        gen_optimizer.apply_gradients(
+            zip(
+                gradients_of_generator,
+                generator.trainable_variables
+            )
+        )
+
+        # Apply discriminator gradients
+        disc_optimizer.apply_gradients(
+            zip(
+                gradients_of_discriminator,
+                discriminator.trainable_variables
+            )
+        )
+
+    # Store losses
+    gen_losses.append(gen_loss.numpy())
+    disc_losses.append(disc_loss.numpy())
+
+    # Print losses
+    print(
+        f"Epoch {epoch+1}/{EPOCHS} | "
+        f"Generator Loss: {gen_loss.numpy():.4f} | "
+        f"Discriminator Loss: {disc_loss.numpy():.4f}"
+    )
+
+# ==========================
+# Plot Loss Curve
+# ==========================
+
+plt.figure(figsize=(8,5))
+
+plt.plot(gen_losses, label='Generator Loss')
+
+plt.plot(disc_losses, label='Discriminator Loss')
+
+plt.xlabel("Epochs")
+plt.ylabel("Loss")
+
+plt.title("GAN Loss Curve")
+
+plt.legend()
+
+plt.show()
+
+# ==========================
+# Generate Sample Images
+# ==========================
+
+# Generate random noise
+noise = tf.random.normal([16, noise_dim])
+
+# Generate fake images
+generated_images = generator(noise, training=False)
+
+# Display generated images
+fig = plt.figure(figsize=(4,4))
+
+for i in range(16):
+
+    plt.subplot(4, 4, i + 1)
+
+    plt.imshow(
+        generated_images[i, :, :, 0],
+        cmap='gray'
+    )
+
+    plt.axis('off')
+
+plt.tight_layout()
+
+plt.show()
+
+
+
+
+Generative AI is a type of artificial intelligence designed to create new
+content such as text, images, music or even code by learning patterns
+from existing data. These models generate original outputs that are often
+indistinguishable from human-created content. These models use
+techniques like deep learning and neural networks to generate output.
+
+3. Variational Autoencoders (VAEs) and Generative
+Adversarial Networks (GANs)
+ VAEs and GANs were among the first deep learning architectures for
+generative tasks.
+ A VAE encodes data into a compressed latent space and then decodes
+it back with a probabilistic twist that encourages smooth, continuous
+representations. This makes them good for controllable generation and
+interpolation between styles.
+ GANs in contrast use two networks against each other a generator that
+tries to produce realistic outputs and a discriminator that tries to detect
+fakes.
+
+ This adversarial setup leads to sharp, lifelike images though training
+can be unstable and prone to mode collapse.
